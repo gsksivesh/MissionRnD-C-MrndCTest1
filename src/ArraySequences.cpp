@@ -31,7 +31,84 @@ Difficulty : Medium
 #include <stdio.h>
 #include <math.h>
 
+int is_in_geoseq(int *arr, int len)
+{
+	int i;
+	int temp;
+	if (len <= 2)
+		return 0;
+	if (arr[1] % arr[0] == 0)
+		temp = arr[1] / arr[0];
+	else
+		return 0;
+	for (i = 1; i < len - 1; i++)
+	{
+		if (arr[i + 1] % arr[i] == 0 && arr[i + 1] / arr[i] == temp)
+			continue;
+		else
+			break;
+	}
+	if (i >= 2)
+		return i;
+	return 0;
+}
+int is_in_artseq(int *arr, int len)
+{
+	int i;
+	int temp;
+	if (len <= 2)
+		return 0;
+	temp = arr[1] - arr[0];
+	for (i = 1; i < len - 1; i++)
+	{
+		if (arr[i + 1] - arr[i] == temp)
+			continue;
+		else
+			break;
+	}
+	if (i >= 2)
+		return i;
+	return 0;
+}
 int * find_sequences(int *arr, int len){
 	//Return final array which has 6indexes [AP1_S,AP1_E,AP2_S,AP2_E,GP1_S,GP2_E]
-	return NULL;
+	int *final_array;
+	int i, temp;
+	int art_flag = 0;
+
+	if (arr == NULL)
+		return NULL;
+	if (len <= 2)
+		return NULL;
+	final_array = (int*)malloc(sizeof(int)* 6);
+	for (i = 0; i < len; i++)
+	{
+		temp = is_in_geoseq(arr + i, len - i);
+		if (temp)
+		{
+			final_array[4] = i;
+			final_array[5] = i + temp;
+		}
+		if (art_flag == 0)
+		{
+			temp = is_in_artseq(arr + i, len - i);
+			if (temp)
+			{
+
+				final_array[0] = i;
+				final_array[1] = i + temp;
+				art_flag = final_array[1];
+			}
+		}
+		else if (i > art_flag)
+		{
+			temp = is_in_artseq(arr + i, len - i);
+			if (temp)
+			{
+				final_array[2] = i;
+				final_array[3] = i + temp;
+			}
+		}
+	}
+	return final_array;
 }

@@ -32,7 +32,100 @@ struct node{
 	int data;
 	struct node *next;
 };
+int length_of_cll(struct node *head)
+{
+	struct node *temp1;
+	int length = 0;
+	temp1 = head;
+	while (temp1->next != head)
+	{
+		length++;
+		temp1 = temp1->next;
+	}
+	return length + 1;
+}
+struct node * merge_Circular_LinkedLists(struct node *head1, struct node *head2) 
+{
+	struct node *temp1, *temp2, *temp;
+	int temp_num;
+	if (head1 == NULL)
+		return head2;
+	if (head2 == NULL)
+		return head1;
+	temp1 = head1;
+	temp2 = head2;
+	while (temp1->next != head1 && temp2->next != head2)
+	{
+		if (temp2->data >= temp1->data && temp2->data <= temp1->next->data)
+		{
+			temp = temp1->next;
+			temp1->next = temp2;
+			temp1 = temp;
+		}
+		else if (temp1->data >= temp2->data && temp1->data <= temp2->next->data)
+		{
+			temp = temp2->next;
+			temp2->next = temp1;
+			temp2 = temp;
+		}
+	}
+	
+	if (temp1->next==head1)
+	{
+		if (temp2->data <= temp1->data)
+		{
+			temp = temp2->next;
+			temp2->next = temp1;
+			temp1->next = temp;
+			temp->next = head1;
+		}
+		else
+		{
+			temp2->next->next = temp1;
+			temp1->next = head1;
+		}
+		return head1;
+	}
+	else
+	{
+		if (temp1->data <= temp2->data)
+		{
+			temp = temp1->next;
+			temp1->next = temp2;
+			temp2->next = temp;
+			temp->next = head2;
+		}
+		else
+		{
+			temp1->next->next = temp2;
+			temp2->next = head2;
+		}
+		return head2;
+	}
+}
 int merge_circularlists(struct node **head1, struct node **head2){
 	//Returns Length of merged Sorted circular SLL and also points *head1 to final SLL .
-	return -1;
+	struct node *temp1, *temp2;
+	int temp;
+	if (*head1 == NULL&&*head2 == NULL)
+		return -1;
+	if (*head1 == NULL)
+	{
+		head1 = head2;
+		return length_of_cll(*head1);
+	}
+	if (*head2 == NULL)
+	{
+		return length_of_cll(*head1);
+	}
+	temp1 = *head1;
+	temp2 = *head2;
+	temp1 = merge_Circular_LinkedLists(temp1, temp2);
+	*head1 = temp1;
+	while (temp1->next != *head1)
+	{
+		temp = temp1->data;
+		temp1 = temp1->next;
+	}
+	return length_of_cll(temp1);
 }
